@@ -3,13 +3,15 @@ pragma solidity ^0.4.2;
 import "./Token.sol";
 import "./Owned.sol";
 
-contract Unitoken is Token, Owned{
+contract Unitoken is Token, Owned {
     /* Public variables of the token */
     string public standard = 'Token 0.1';
     string public name;
     string public symbol;
     uint8 public decimals;
     uint256 public totalSupply;
+
+    mapping (address => bool) public frozenAccount;
 
     /* Initializes contract with initial supply tokens to the creator of the contract */
     function Unitoken(
@@ -26,8 +28,6 @@ contract Unitoken is Token, Owned{
         if (centralMinter != 0 ) owner = centralMinter;      // Sets the owner as specified (if centralMinter is not specified the owner is msg.sender)
         balanceOf[owner] = initialSupply;                   // Give the owner all initial tokens
     }
-
-    mapping (address => bool) public frozenAccount;
 
     /* This generates a public event on the blockchain that will notify clients */
     event Transfer(address indexed from, address indexed to, uint256 value);
