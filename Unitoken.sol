@@ -3,8 +3,6 @@ pragma solidity ^0.4.2;
 import "./Token.sol";
 import "./Owned.sol";
 
-contract TokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData); }
-
 contract Unitoken is Token, Owned{
     /* Public variables of the token */
     string public standard = 'Token 0.1';
