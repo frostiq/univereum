@@ -1,10 +1,9 @@
 pragma solidity ^0.4.2;
-contract token {
-    mapping (address => uint256) public balanceOf;
-}
+
+import "./Token.sol";
 
 contract LiquidDemocracy {
-    token public votingToken;
+    Token public votingToken;
     bool  underExecution;
     address public appointee;
     mapping (address => uint) public voterId;
@@ -30,7 +29,7 @@ contract LiquidDemocracy {
         string forbiddenFunctionCall,
         uint percentLossInEachRound
     ) {
-        votingToken = token(votingWeightToken);
+        votingToken = Token(votingWeightToken);
         delegatedVotes.length++;
         delegatedVotes[0] = DelegatedVote({nominee: 0, voter: 0});
         forbiddenFunction = forbiddenFunctionCall;

@@ -1,24 +1,11 @@
 pragma solidity ^0.4.2;
-contract owned {
-    address public owner;
 
-    function owned() {
-        owner = msg.sender;
-    }
+import "./Token.sol";
+import "./Owned.sol";
 
-    modifier onlyOwner {
-        if (msg.sender != owner) throw;
-        _;
-    }
+contract TokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData); }
 
-    function transferOwnership(address newOwner) onlyOwner {
-        owner = newOwner;
-    }
-}
-
-contract tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData); }
-
-contract Unitoken is owned{
+contract Unitoken is Token, Owned{
     /* Public variables of the token */
     string public standard = 'Token 0.1';
     string public name;
@@ -43,7 +30,6 @@ contract Unitoken is owned{
     }
 
     /* This creates an array with all balances */
-    mapping (address => uint256) public balanceOf;
     mapping (address => mapping (address => uint256)) public allowance;
     mapping (address => bool) public frozenAccount;
 
@@ -73,7 +59,7 @@ contract Unitoken is owned{
     /* Approve and then comunicate the approved contract in a single tx */
     function approveAndCall(address _spender, uint256 _value, bytes _extraData)
         returns (bool success) {    
-        tokenRecipient spender = tokenRecipient(_spender);
+        TokenRecipient spender = TokenRecipient(_spender);
         if (approve(_spender, _value)) {
             spender.receiveApproval(msg.sender, _value, this, _extraData);
             return true;
