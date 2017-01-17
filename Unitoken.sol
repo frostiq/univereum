@@ -25,12 +25,10 @@ contract Unitoken is Token, Owned{
         name = tokenName;                                   // Set the name for display purposes
         symbol = tokenSymbol;                               // Set the symbol for display purposes
         decimals = decimalUnits; 
-        if(centralMinter != 0 ) owner = centralMinter;      // Sets the owner as specified (if centralMinter is not specified the owner is msg.sender)
+        if (centralMinter != 0 ) owner = centralMinter;      // Sets the owner as specified (if centralMinter is not specified the owner is msg.sender)
         balanceOf[owner] = initialSupply;                   // Give the owner all initial tokens
     }
 
-    /* This creates an array with all balances */
-    mapping (address => mapping (address => uint256)) public allowance;
     mapping (address => bool) public frozenAccount;
 
     /* This generates a public event on the blockchain that will notify clients */
@@ -47,36 +45,6 @@ contract Unitoken is Token, Owned{
         balanceOf[msg.sender] -= _value;                     // Subtract from the sender
         balanceOf[_to] += _value;                            // Add the same to the recipient
         Transfer(msg.sender, _to, _value);                   // Notify anyone listening that this transfer took place
-    }
-
-    /* Allow another contract to spend some tokens in your behalf */
-    function approve(address _spender, uint256 _value)
-        returns (bool success) {
-        allowance[msg.sender][_spender] = _value;
-        return true;
-    }
-
-    /* Approve and then comunicate the approved contract in a single tx */
-    function approveAndCall(address _spender, uint256 _value, bytes _extraData)
-        returns (bool success) {    
-        TokenRecipient spender = TokenRecipient(_spender);
-        if (approve(_spender, _value)) {
-            spender.receiveApproval(msg.sender, _value, this, _extraData);
-            return true;
-        }
-    }
-
-    /* A contract attempts to get the coins */
-    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
-        if (frozenAccount[_from]) throw;                        // Check if frozen            
-        if (balanceOf[_from] < _value) throw;                 // Check if the sender has enough
-        if (balanceOf[_to] + _value < balanceOf[_to]) throw;  // Check for overflows
-        if (_value > allowance[_from][msg.sender]) throw;   // Check allowance
-        balanceOf[_from] -= _value;                          // Subtract from the sender
-        balanceOf[_to] += _value;                            // Add the same to the recipient
-        allowance[_from][msg.sender] -= _value;
-        Transfer(_from, _to, _value);
-        return true;
     }
 
     function mintToken(address target, uint256 mintedAmount) onlyOwner {
