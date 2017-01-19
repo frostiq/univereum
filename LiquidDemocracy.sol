@@ -12,6 +12,7 @@ contract LiquidDemocracy {
     uint public delegatedPercent;
     uint public lastWeightCalculation;
     uint public numberOfDelegationRounds;
+    uint public maxRounds;
 
     uint public numberOfVotes;
     DelegatedVote[] public delegatedVotes;
@@ -27,7 +28,8 @@ contract LiquidDemocracy {
     function LiquidDemocracy(
         address votingWeightToken,
         string forbiddenFunctionCall,
-        uint percentLossInEachRound
+        uint percentLossInEachRound,
+        uint maxNumberOfDelegationRounds
     ) {
         votingToken = Token(votingWeightToken);
         delegatedVotes.length++;
@@ -35,10 +37,11 @@ contract LiquidDemocracy {
         forbiddenFunction = forbiddenFunctionCall;
         delegatedPercent = 100 - percentLossInEachRound;
         if (delegatedPercent > 100) delegatedPercent = 100;
+        maxRounds = maxNumberOfDelegationRounds;
     }
 
     function vote(address nominatedAddress) returns (uint voteIndex) {
-        if (voterId[msg.sender]== 0) {
+        if (voterId[msg.sender] == 0) {
             voterId[msg.sender] = delegatedVotes.length;
             numberOfVotes++;
             voteIndex = delegatedVotes.length++;
@@ -52,10 +55,10 @@ contract LiquidDemocracy {
     }
 
     function execute(address target, uint valueInEther, bytes32 bytecode) {
-        if (msg.sender != appointee                                 // If caller is the current appointee,
-            || underExecution //                                    // if the call is being executed,
-            || bytes4(bytecode) == bytes4(sha3(forbiddenFunction))  // and it's not trying to do the forbidden function
-            || numberOfDelegationRounds < 4 )                       // and delegation has been calculated enough
+        if (msg.sender != appointee                                      // If caller is the current appointee,
+            || underExecution                                            // if the call is being executed,
+            || bytes4(bytecode) == bytes4(sha3(forbiddenFunction))       // and it's not trying to do the forbidden function
+            || numberOfDelegationRounds <= maxRounds ) // and delegation has been calculated enough
             throw;
 
         underExecution = true;
@@ -88,7 +91,7 @@ contract LiquidDemocracy {
         }
         else {
             numberOfDelegationRounds++;
-            uint lossRatio = 100 * delegatedPercent ** numberOfDelegationRounds / 100 ** numberOfDelegationRounds;
+            uint lossRatio = 100 * (delegatedPercent / 100) ** numberOfDelegationRounds;
             if (lossRatio > 0) {
                 for (i=1; i< delegatedVotes.length; i++){
                     v = delegatedVotes[i];
@@ -99,7 +102,7 @@ contract LiquidDemocracy {
                         voteWeight[v.nominee] += weight;
                     }
 
-                    if (numberOfDelegationRounds>3 && voteWeight[v.nominee] > currentMax) {
+                    if (numberOfDelegationRounds > maxRounds && voteWeight[v.nominee] > currentMax) {
                         currentWinner = v.nominee;
                         currentMax = voteWeight[v.nominee];
                     }
@@ -107,7 +110,7 @@ contract LiquidDemocracy {
             }
         }
 
-        if (numberOfDelegationRounds > 3) {
+        if (numberOfDelegationRounds > maxRounds) {
             NewAppointee(currentWinner, appointee == currentWinner);
             appointee = currentWinner;
         }
