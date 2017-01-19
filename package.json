@@ -10,5 +10,9 @@
     "test": "mocha"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "web3" : "^0.18.2",
+    "mocha" : "^3.2.0"
+  }
 }
