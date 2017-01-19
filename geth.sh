@@ -1,0 +1,1 @@
+geth --datadir ~/dapps/testing/00/ --port 30310 --rpc --networkid 4567890 --nodiscover --maxpeers 0 --verbosity 6 --pprof --pprofport 6110 console 2
