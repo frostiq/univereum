@@ -1,4 +1,5 @@
 bin/
+.vscode/
 
 #for Node.js
 # Logs
