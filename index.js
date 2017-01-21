@@ -14,8 +14,8 @@ let bytecode = '0x' + contract.bytecode;
 let gasEstimate = web3.eth.estimateGas({data: bytecode});
 let Unitoken = web3.eth.contract(JSON.parse(contract.abi));
 
-var myContractInstance = Unitoken.new(100000, 'Unitoken_v0.0.3', 2, 'UNI',
-  { data: bytecode, gas: gasEstimate, from: account},
+var myContractInstance = Unitoken.new(100000, 'Unitoken_v0.0.3', 2, 'UNI', account,
+  { data: bytecode, gas: gasEstimate*2, from: account},
   function(err, myContract){
     if(!err) {
        // NOTE: The callback will fire twice!
@@ -28,12 +28,13 @@ var myContractInstance = Unitoken.new(100000, 'Unitoken_v0.0.3', 2, 'UNI',
        // check address on the second call (contract deployed)
        } else {
            console.log(myContract.address) // the contract address
+           console.log('Total supply = ' + myContract.totalSupply())
        }
 
        // Note that the returned "myContractReturned" === "myContract",
        // so the returned "myContractReturned" object will also get the address set.
     }
     else{
-      console.err(err)
+      console.error(err)
     }
   });

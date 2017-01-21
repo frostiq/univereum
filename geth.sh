@@ -1,1 +1,1 @@
-geth --datadir ~/dapps/testing/00/ --port 30310 --rpc --networkid 4567890 --nodiscover --maxpeers 0 --verbosity 6 --pprof --pprofport 6110 console 2
+geth --mine --targetgaslimit 1 --gasprice 1 --unlock "0x05c42f93fab54b9bdf41b3a7ba2b2ef9061d27b1" --password "passfile" --datadir ~/dapps/testing/00/ --port 30310 --rpc --networkid 4567890 --nodiscover --maxpeers 0 --verbosity 6 --pprof --pprofport 6110 console 2
