@@ -1,6 +1,5 @@
-var assert = require('assert');
-var Web3 = require('web3');
-var contract = require('./bin/Unitoken.json')
+let Web3 = require('web3');
+let contract = require('./bin/contracts/Unitoken.json')
 
 if (typeof web3 !== 'undefined') {
   web3 = new Web3(web3.currentProvider);
@@ -9,13 +8,8 @@ if (typeof web3 !== 'undefined') {
   web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 }
 
-let account = "0x05c42f93fab54b9bdf41b3a7ba2b2ef9061d27b1"
-let bytecode = '0x' + contract.bytecode;
-let gasEstimate = web3.eth.estimateGas({data: bytecode});
-let Unitoken = web3.eth.contract(JSON.parse(contract.abi));
-
-var myContractInstance = Unitoken.new(100000, 'Unitoken_v0.0.3', 2, 'UNI', account,
-  { data: bytecode, gas: gasEstimate*2, from: account},
+let account = web3.eth.accounts[0];
+createContract(web3, contract, account, [100000, 'Unitoken_v0.0.3', 2, 'UNI', account],
   function(err, myContract){
     if(!err) {
        // NOTE: The callback will fire twice!
@@ -37,4 +31,19 @@ var myContractInstance = Unitoken.new(100000, 'Unitoken_v0.0.3', 2, 'UNI', accou
     else{
       console.error(err)
     }
-  });
+  }
+)
+
+function createContract(web3, contractJson, creatorAccount, params, callback){
+  let bytecode = '0x' + contractJson.bytecode;
+  let gasEstimate = web3.eth.estimateGas({data: bytecode});
+  let ContractType = web3.eth.contract(JSON.parse(contractJson.abi));
+  params = params.concat(
+    { data: bytecode, gas: gasEstimate * 2, from: creatorAccount},
+    callback)
+    
+  var instance = ContractType.new.apply(ContractType, params);
+
+  return instance;
+}
+
