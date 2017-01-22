@@ -1,11 +1,12 @@
-var should = require('should');
+let assert = require('assert');
+let util = require('../util.js')
+let BigNumber = require('bignumber.js');
 
 describe('Unitoken', () => {
-  describe('#totalSupply()', () => {
+  describe('#symbol()', () => {
     it('should return correct value', () => {
-      var c = Unitoken.at(addresses.Unitoken)
-      c.symbol().should.be.equal('UNI')
-      c.totalSupply().should.be.above(0)
+      let c = util.getContractInstance('Unitoken')
+      assert.equal(c.symbol(), 'UNI')
     });
   });
 });
@@ -13,8 +14,8 @@ describe('Unitoken', () => {
 describe('LiquidDemocracy', () => {
   describe('#delegatedPercent()', () =>{ 
     it('should return correct value', () => {
-      var c = LiquidDemocracy.at(addresses.LiquidDemocracy)
-      c.delegatedPercent().should.be.equal(75)
+      let c = util.getContractInstance('LiquidDemocracy')
+      assert.deepEqual(c.delegatedPercent(), new BigNumber(25))
     });
   });
 });
