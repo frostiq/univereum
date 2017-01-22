@@ -1,4 +1,5 @@
 let Web3 = require('web3');
+let util = require('./util.js')
 let contract = require('./bin/contracts/Unitoken.json')
 
 if (typeof web3 !== 'undefined') {
@@ -9,7 +10,7 @@ if (typeof web3 !== 'undefined') {
 }
 
 let account = web3.eth.accounts[0];
-createContract(web3, contract, account, [100000, 'Unitoken_v0.0.3', 2, 'UNI', account],
+util.createContract(web3, contract, account, [100000, 'Unitoken_v0.0.3', 2, 'UNI', account],
   function(err, myContract){
     if(!err) {
        // NOTE: The callback will fire twice!
@@ -33,17 +34,4 @@ createContract(web3, contract, account, [100000, 'Unitoken_v0.0.3', 2, 'UNI', ac
     }
   }
 )
-
-function createContract(web3, contractJson, creatorAccount, params, callback){
-  let bytecode = '0x' + contractJson.bytecode;
-  let gasEstimate = web3.eth.estimateGas({data: bytecode});
-  let ContractType = web3.eth.contract(JSON.parse(contractJson.abi));
-  params = params.concat(
-    { data: bytecode, gas: gasEstimate * 2, from: creatorAccount},
-    callback)
-    
-  var instance = ContractType.new.apply(ContractType, params);
-
-  return instance;
-}
 
