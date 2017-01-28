@@ -36,3 +36,5 @@ exports.getContractInstance = function(contractName) {
 
   return contractInstance
 }
+
+exports.accounts = web3.eth.accounts
