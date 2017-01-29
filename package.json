@@ -18,6 +18,7 @@
   "dependencies": {
     "web3" : "^0.18.2",
     "mocha" : "^3.2.0",
-    "bignumber.js" : "^4.0.0"
+    "bignumber.js" : "^4.0.0",
+    "sleep" : "^5.1.0"
   }
 }

@@ -1,3 +1,4 @@
 let util = require('./util.js')
 let addresses = require('./addressBook.json')
-let c = util.getContractInstance('LiquidDemocracy')
+web3.eth.defaultAccount = util.accounts[0]
+let c = util.getContractInstance('Association')

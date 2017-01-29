@@ -1,10 +1,10 @@
 let Web3 = require('web3')
+let sleep = require('sleep');
 let addresses = require('./addressBook.json')
 
 if (typeof web3 !== 'undefined') {
   web3 = new Web3(web3.currentProvider)
 } else {
-  // set the provider you want from Web3.providers
   web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"))
 }
 
@@ -38,3 +38,13 @@ exports.getContractInstance = function(contractName) {
 }
 
 exports.accounts = web3.eth.accounts
+
+exports.txparams = {from : web3.eth.accounts[0], gas : 4712388}
+
+exports.waitForAppliance = function(txhash){
+  let tx = web3.eth.getTransaction(txhash)
+  while(tx.blockNumber == null){
+    sleep.msleep(300)
+    tx = web3.eth.getTransaction(txhash)
+  }
+}

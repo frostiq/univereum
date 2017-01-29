@@ -20,12 +20,26 @@ describe('LiquidDemocracy', () => {
     });
   });
   
-  describe('#vote()', () => {
-    it('should increment numberOfVotes', () => {
-      let n1 = c.numberOfVotes()
-      let r = c.vote(util.accounts[3], {from : util.accounts[1]})
-      console.log(r)
-      let n2 = c.numberOfVotes()
+  // describe('#vote()', () => {
+  //   it('should increment numberOfVotes', () => {
+  //     let n1 = c.numberOfVotes()
+  //     let txhash = c.vote(util.accounts[3], util.txparams)
+  //     util.waitForAppliance(txhash)
+  //     let n2 = c.numberOfVotes()
+  //     assert.deepEqual(n2, n1.plus(1))
+  //   });
+  // });
+});
+
+describe('Association', () => {
+  let c = util.getContractInstance('Association')
+  
+  describe('#newProposal()', () => {
+    it('should increment numProposals', () => {
+      let n1 = c.numProposals()
+      let txhash = c.newProposal(util.accounts[0], 0, "test proposal", [], util.txparams)
+      util.waitForAppliance(txhash)
+      let n2 = c.numProposals()
       assert.deepEqual(n2, n1.plus(1))
     });
   });
