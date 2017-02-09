@@ -73,7 +73,7 @@ contract LiquidAssociation is Owned {
             delegationAddress,
             minimumSharesToPassAVote, 
             debatingPeriodInMinutes, 
-            forbiddenFunction)
+            forbiddenFunction);
     }
 
     function newProposal(
