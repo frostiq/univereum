@@ -102,4 +102,9 @@ contract Delegation is IDelegation, Owned {
 
         DelegationRoundFinished(_numberOfRounds);
     }
+
+    /* This unnamed function is called whenever someone tries to send ether to it */
+    function () {
+        throw;     // Prevents accidental sending of ether
+    }
 }

@@ -1,9 +1,9 @@
 pragma solidity ^0.4.2;
 
-import "./Token.sol";
+import "./IToken.sol";
 import "./Owned.sol";
 
-contract Unitoken is Token, Owned {
+contract Unitoken is IToken, Owned {
     /* Public variables of the token */
     string public standard = 'Token 0.1';
     string public name;
