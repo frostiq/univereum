@@ -17,13 +17,27 @@ function getContractType(contractName){
   return contractType
 }
 
-exports.createContract = function(contractName, params, callback){
+function createCallback(err, myContract){
+  if(!err) {
+    if(!myContract.address) {
+       console.log(myContract.transactionHash)
+    } else {
+       console.log(myContract.address) // the contract address
+       console.log('Total supply = ' + myContract.totalSupply())
+    }
+  }
+  else{
+    console.error(err)
+  }
+}
+
+exports.createContract = function(contractName, params){
   let contractType = getContractType(contractName)
   let gasEstimate = web3.eth.estimateGas({data: contractType.bytecode})
   let creatorAccount = web3.eth.accounts[0]
   params = params.concat(
     { data: contractType.bytecode, gas: gasEstimate * 2, from: creatorAccount},
-    callback)
+    createCallback)
     
   let instance = contractType.new.apply(contractType, params)
 
@@ -41,10 +55,20 @@ exports.accounts = web3.eth.accounts
 
 exports.txparams = {from : web3.eth.accounts[0], gas : 4712388}
 
-exports.waitForAppliance = function(txhash){
-  let tx = web3.eth.getTransaction(txhash)
-  while(tx.blockNumber == null){
-    sleep.msleep(300)
-    tx = web3.eth.getTransaction(txhash)
-  }
+exports.waitForAppliance = function(txhash, callback){
+  let filter = web3.eth.filter('latest')
+  filter.watch(function(e, result){
+    if(!e){
+      web3.eth.getTransaction(txhash, (e, tx) => {
+        if (!e && tx.blockNumber != null){
+          filter.stopWatching()
+          console.log('tx block number: ' + tx.blockNumber)
+          callback()
+        }
+      })
+    }
+    else{
+      console.error(e)
+    }
+  });
 }
