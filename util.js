@@ -23,7 +23,6 @@ function createCallback(err, myContract){
        console.log(myContract.transactionHash)
     } else {
        console.log(myContract.address) // the contract address
-       console.log('Total supply = ' + myContract.totalSupply())
     }
   }
   else{
@@ -36,7 +35,7 @@ exports.createContract = function(contractName, params){
   let gasEstimate = web3.eth.estimateGas({data: contractType.bytecode})
   let creatorAccount = web3.eth.accounts[0]
   params = params.concat(
-    { data: contractType.bytecode, gas: gasEstimate * 2, from: creatorAccount},
+    { data: contractType.bytecode, gas: 4712388, from: creatorAccount},
     createCallback)
     
   let instance = contractType.new.apply(contractType, params)
