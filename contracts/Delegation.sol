@@ -5,6 +5,7 @@ import "./Owned.sol";
 
 contract IDelegation{
     mapping (address => uint) public voteWeight;
+    uint public numberOfRounds;
 }
 
 contract Delegation is IDelegation, Owned {
@@ -14,13 +15,10 @@ contract Delegation is IDelegation, Owned {
     DelegatedVote[] public _delegatedVotes;
     uint public _delegatedPercent;
     uint public _lastRoundTime;
-    uint public _numberOfRounds;
-    uint public _maxRounds;
 
     event ChangeOfRules(
         address tokenAddress,
-        uint delegatedPercent,
-        uint maxNumberOfRounds
+        uint delegatedPercent
     );
 
     event DelegationRoundFinished(uint roundNumber);
@@ -32,26 +30,23 @@ contract Delegation is IDelegation, Owned {
 
     function Delegation(
         address tokenAddress,
-        uint percentLossInEachRound,
-        uint maxRounds)
+        uint percentLossInEachRound)
     {
-        changeRules(tokenAddress, percentLossInEachRound, maxRounds);
+        changeRules(tokenAddress, percentLossInEachRound);
     }
 
     function changeRules(
         address tokenAddress,
-        uint percentLossInEachRound,
-        uint maxRounds)
+        uint percentLossInEachRound)
         onlyOwner
     {
         _weightToken = IToken(tokenAddress);
         _delegatedPercent = 100 - percentLossInEachRound;
         if (_delegatedPercent > 100) _delegatedPercent = 100;
-        _maxRounds = maxRounds;
         _delegatedVotes.length++;
         _delegatedVotes[0] = DelegatedVote({nominee: 0, voter: 0});
 
-        ChangeOfRules(tokenAddress, _delegatedPercent, _maxRounds);
+        ChangeOfRules(tokenAddress, _delegatedPercent);
     }
 
     function delegateVote(address nominatedAddress) returns (uint voteIndex) {
@@ -69,7 +64,7 @@ contract Delegation is IDelegation, Owned {
     function calculateVotes() {
         
         if (now > _lastRoundTime + 90 minutes) {
-            _numberOfRounds = 0;
+            numberOfRounds = 0;
             _lastRoundTime = now;
 
             // Distribute the initial weight
@@ -81,16 +76,13 @@ contract Delegation is IDelegation, Owned {
             }
         }
         else {
-            if (_numberOfRounds <= _maxRounds) throw;
-
-            _numberOfRounds++;
-            uint lossRatio = 100 * (_delegatedPercent / 100) ** _numberOfRounds;
+            numberOfRounds++;
+            uint lossRatio = 100 * (_delegatedPercent / 100) ** numberOfRounds;
             if (lossRatio > 0) {
-                DelegatedVote memory v;
                 uint weight = 0;
-                for (i=1; i< _delegatedVotes.length; i++){
+                DelegatedVote v = _delegatedVotes[0];
+                for (i = 1; i < _delegatedVotes.length; i++){
                     v = _delegatedVotes[i];
-
                     if (v.nominee != v.voter && voteWeight[v.voter] > 0) {
                         weight = voteWeight[v.voter] * lossRatio / 100;
                         voteWeight[v.voter] -= weight;
@@ -100,7 +92,7 @@ contract Delegation is IDelegation, Owned {
             }
         }
 
-        DelegationRoundFinished(_numberOfRounds);
+        DelegationRoundFinished(numberOfRounds);
     }
 
     /* This unnamed function is called whenever someone tries to send ether to it */

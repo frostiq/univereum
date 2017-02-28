@@ -52,7 +52,9 @@ exports.getContractInstance = function(contractName) {
 
 exports.accounts = web3.eth.accounts
 
-exports.txparams = {from : web3.eth.accounts[0], gas : 4712388}
+exports.txparams = function(account = web3.eth.accounts[0]) {
+  return {from : account, gas : 4712388}
+}
 
 exports.waitForAppliance = function(txhash, callback){
   let filter = web3.eth.filter('latest')

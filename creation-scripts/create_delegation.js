@@ -3,4 +3,4 @@ let addresses = require('../addressBook.json')
 
 let token = addresses.Unitoken
 
-util.createContract('Delegation', [token, 75, 3])
+util.createContract('Delegation', [token, 75])
