@@ -9,7 +9,6 @@ contract LiquidAssociation is Owned {
     Proposal[] public proposals;
     uint public minimumQuorum;
     uint public debatingPeriodInMinutes;
-    string public forbiddenFunction;
 
     event ProposalAdded(uint proposalID, address recipient, string description);
     event Voted(uint proposalID, bool position, address voter);
@@ -17,8 +16,7 @@ contract LiquidAssociation is Owned {
     event ChangeOfRules(
         address delegationAddress,
         uint minimumSharesToPassAVote, 
-        uint minutesForDebate,
-        string forbiddenFunctionCall);
+        uint minutesForDebate);
 
     struct Vote {
         bool inSupport;
@@ -46,34 +44,29 @@ contract LiquidAssociation is Owned {
     function LiquidAssociation(
         address delegationAddress,
         uint minimumSharesToPassAVote, 
-        uint minutesForDebate,
-        string forbiddenFunctionCall) 
+        uint minutesForDebate) 
     {
         changeVotingRules(
             delegationAddress,
             minimumSharesToPassAVote, 
-            minutesForDebate,
-            forbiddenFunctionCall);
+            minutesForDebate);
     }
 
     function changeVotingRules(
         address delegationAddress,
         uint minimumSharesToPassAVote, 
-        uint minutesForDebate,
-        string forbiddenFunctionCall)
+        uint minutesForDebate)
         onlyOwner 
     {
         delegation = IDelegation(delegationAddress);
         if (minimumSharesToPassAVote == 0 ) minimumSharesToPassAVote = 1;
         minimumQuorum = minimumSharesToPassAVote;
         debatingPeriodInMinutes = minutesForDebate;
-        forbiddenFunction = forbiddenFunctionCall;
 
         ChangeOfRules(
             delegationAddress,
             minimumSharesToPassAVote, 
-            debatingPeriodInMinutes, 
-            forbiddenFunction);
+            debatingPeriodInMinutes);
     }
 
     function newProposal(
