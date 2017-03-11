@@ -1,0 +1,1 @@
+How to setup local dev environment (not real network for testing purpuses):

@@ -86,6 +86,10 @@ contract LiquidAssociation is Owned {
         ProposalAdded(proposalID, p.recipient, p.description);
     }
 
+    function numProposals() constant return (unit numberOfProposals) {
+        return proposals.length;
+    }
+
     function checkProposalCode(
         uint proposalNumber,
         address target,
