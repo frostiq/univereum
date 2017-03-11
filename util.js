@@ -40,7 +40,6 @@ exports.waitForAppliance = function(txhash, callback){
       web3.eth.getTransaction(txhash, (e, tx) => {
         if (!e && tx.blockNumber != null){
           filter.stopWatching()
-          console.log('tx block number: ' + tx.blockNumber)
           callback()
         }
       })

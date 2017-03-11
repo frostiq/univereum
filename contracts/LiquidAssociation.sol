@@ -86,7 +86,7 @@ contract LiquidAssociation is Owned {
         ProposalAdded(proposalID, p.recipient, p.description);
     }
 
-    function numProposals() constant return (unit numberOfProposals) {
+    function numProposals() constant returns (uint numberOfProposals) {
         return proposals.length;
     }
 
