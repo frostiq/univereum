@@ -13,10 +13,7 @@ contract LiquidAssociation is Owned {
     event ProposalAdded(uint proposalID, address recipient, string description);
     event Voted(uint proposalID, bool position, address voter);
     event ProposalExecuted(uint proposalID, int result, uint quorum, bool active);
-    event ChangeOfRules(
-        address delegationAddress,
-        uint minimumSharesToPassAVote, 
-        uint minutesForDebate);
+    event ChangeOfRules(address delegationAddress, uint minimumSharesToPassAVote, uint minutesForDebate);
 
     struct Vote {
         bool inSupport;
@@ -99,6 +96,21 @@ contract LiquidAssociation is Owned {
     {
         Proposal p = proposals[proposalNumber];
         return p.proposalHash == sha3(target, transactionBytecode);
+    }
+
+    function vote(uint proposalNumber, bool supportsProposal)
+        onlyDelegates
+        returns (uint voteID)
+    {
+        Proposal p = proposals[proposalNumber];
+        if (p.voted[msg.sender] == true) throw;
+
+        voteID = p.votes.length++;
+        p.votes[voteID] = Vote({inSupport: supportsProposal, voter: msg.sender});
+        p.voted[msg.sender] = true;
+        p.numberOfVotes = voteID + 1;
+        Voted(proposalNumber,  supportsProposal, msg.sender);
+        return voteID;
     }
 
     function executeProposal(uint proposalNumber, bytes transactionBytecode) returns (int result) {
