@@ -1,5 +1,5 @@
 let Web3 = require('web3')
-let sleep = require('sleep');
+let fs = require('fs');
 let addresses = require('./addressBook.json')
 
 if (typeof web3 !== 'undefined') {
@@ -8,35 +8,12 @@ if (typeof web3 !== 'undefined') {
   web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"))
 }
 
-function getContractType(contractName){
-  let contract = require(`./bin/contracts/${contractName}.json`)
-  let bytecode = '0x' + contract.bytecode
-  let contractType = web3.eth.contract(JSON.parse(contract.abi))
-  contractType.bytecode = bytecode
-
-  return contractType
-}
-
-function createCallback(err, myContract){
-  if(!err) {
-    if(!myContract.address) {
-       console.log(myContract.transactionHash)
-    } else {
-       console.log(myContract.address) // the contract address
-    }
-  }
-  else{
-    console.error(err)
-  }
-}
-
 exports.createContract = function(contractName, params){
   let contractType = getContractType(contractName)
-  let gasEstimate = web3.eth.estimateGas({data: contractType.bytecode})
   let creatorAccount = web3.eth.accounts[0]
   params = params.concat(
     { data: contractType.bytecode, gas: 4712388, from: creatorAccount},
-    createCallback)
+    creationCallback(contractName))
     
   let instance = contractType.new.apply(contractType, params)
 
@@ -72,4 +49,30 @@ exports.waitForAppliance = function(txhash, callback){
       console.error(e)
     }
   });
+}
+
+function getContractType(contractName){
+  let contract = require(`./bin/contracts/${contractName}.json`)
+  let bytecode = '0x' + contract.bytecode
+  let contractType = web3.eth.contract(JSON.parse(contract.abi))
+  contractType.bytecode = bytecode
+
+  return contractType
+}
+
+let creationCallback = (contractName) => (err, myContract) => {
+  if(!err) {
+    if(!myContract.address) {
+       console.log('Contract created in tx: ' + myContract.transactionHash)
+    } else {
+       console.log('Contract address: ' + myContract.address)
+       addresses[contractName] = myContract.address
+       fs.writeFile('./addressBook.json', JSON.stringify(addresses,  null, 2), function (err) {
+         if (err) console.error(err)
+       })
+    }
+  }
+  else{
+    console.error(err)
+  }
 }
