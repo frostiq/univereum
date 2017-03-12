@@ -4,7 +4,7 @@ var EmbarkSpec = Embark.initTests();
 var web3 = EmbarkSpec.web3;
 
 describe("Unitoken", () => {
-  before(function (done) {
+  before((done) => {
     var contractsConfig = {
       "Unitoken": {
         args: [100000, "Unitoken", 2, "UNI", "0x0"]
@@ -16,7 +16,7 @@ describe("Unitoken", () => {
   describe("#symbol()", () => {
     it("should return correct value", (done) => {
         console.log("deployed to: " + Unitoken.address)
-        Unitoken.symbol(function(err, result) {
+        Unitoken.symbol((err, result) => {
           assert.equal(result, "UNI");
           done();
         });
