@@ -3,13 +3,13 @@
     "gas": 4712388,
     "contracts": {
       "IToken": {
-        "address": "0x0"
+        "deploy": false
       },
       "IDelegation": {
-        "address": "0x0"
+        "deploy": false
       },
       "Owned": {
-        "address": "0x0"
+        "deploy": false
       },
       "Unitoken": {
         "args": [100000, "Unitoken_v0.0.3", 2, "UNI", "0x0"]
