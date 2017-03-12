@@ -11,9 +11,10 @@
   },
   "author": "",
   "license": "ISC",
-  "homepage": "",
+  "homepage": "https://github.com/frostiq/univereum",
   "devDependencies": {
     "embark": "^2.4.0",
-    "mocha": "^3.2.0"
+    "mocha": "^3.2.0",
+    "ethereumjs-testrpc": "^3.0.3"
   }
 }

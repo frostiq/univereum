@@ -1,6 +1,9 @@
 bin/
 .embark/
 .vscode/
+dist/
+config/production/password
+config/livenet/password
 
 #for Node.js
 # Logs
