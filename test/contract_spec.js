@@ -1,5 +1,5 @@
-var assert = require('assert');
-var Embark = require('embark');
+var assert = require("assert");
+var Embark = require("embark");
 var EmbarkSpec = Embark.initTests();
 var web3 = EmbarkSpec.web3;
 
@@ -13,8 +13,8 @@ describe("Unitoken", () => {
     EmbarkSpec.deployAll(contractsConfig, done);
   });
 
-  describe('#symbol()', () => {
-    it('should return correct value', (done) => {
+  describe("#symbol()", () => {
+    it("should return correct value", (done) => {
         console.log("deployed to: " + Unitoken.address)
         Unitoken.symbol(function(err, result) {
           assert.equal(result, "UNI");
