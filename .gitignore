@@ -1,6 +1,5 @@
-addressBook.json
-
 bin/
+.embark/
 .vscode/
 
 #for Node.js

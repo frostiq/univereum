@@ -1,24 +1,19 @@
 {
   "name": "univereum",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "description": "",
-  "repository": {
+    "repository": {
     "type": "git",
     "url": "https://github.com/frostiq/univereum.git"
   },
-  "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
-    "test": "mocha"
+    "test": "embark test"
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "web3" : "^0.18.2",
-    "mocha" : "^3.2.0",
-    "bignumber.js" : "^4.0.0",
-    "sleep" : "^5.1.0"
+  "homepage": "",
+  "devDependencies": {
+    "embark": "^2.4.0",
+    "mocha": "^3.2.0"
   }
 }
