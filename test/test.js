@@ -4,10 +4,16 @@ let util = require('../util.js')
 let addresses = require('../addressBook.json')
 
 describe('Unitoken', () => {
+  let c = util.getContractInstance('Unitoken')
   describe('#symbol()', () => {
     it('should return correct value', () => {
-      let c = util.getContractInstance('Unitoken')
       assert.equal(c.symbol(), 'UNI')
+    });
+  });
+  describe('#balanceOf()', () => {
+    it('should return positive balance', () => {
+      let balance = c.balanceOf(util.accounts[0])
+      assert(balance.gt(0))
     });
   });
 });
