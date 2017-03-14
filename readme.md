@@ -8,4 +8,4 @@ Any contribution to the project are greatly welcome!
 
 ## Guides:
 
-[How to setup and run project on a local machine](https://github.com/frostiq/univereum/wiki/How-to-setup-and-run-project-on-a-local-machine)
+### [How to setup and run project on a local machine](https://github.com/frostiq/univereum/wiki/How-to-setup-and-run-project-on-a-local-machine)
