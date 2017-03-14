@@ -1,1 +1,1 @@
-[How to setup project on local machine](https://github.com/frostiq/univereum/wiki/How-to-setup-project-on-local-machine)
+[How to setup and run project on a local machine](https://github.com/frostiq/univereum/wiki/How-to-setup-and-run-project-on-a-local-machine)
