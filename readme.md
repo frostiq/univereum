@@ -1,1 +1,1 @@
-How to setup local dev environment (not real network for testing purpuses):
+[How to setup project on local machine](https://github.com/frostiq/univereum/wiki/How-to-setup-project-on-local-machine)
