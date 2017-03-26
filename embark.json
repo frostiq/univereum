@@ -2,10 +2,19 @@
   "contracts": ["app/contracts/**"],
   "app": {
     "css/app.css": ["app/css/**"],
-    "js/app.js": ["embark.js", "abi.js", "app/js/**"],
+    "js/app.js": [
+      "embark.js", 
+      "abi.js", 
+      "app/js/**"
+      ],
     "index.html": "app/index.html"
   },
   "buildDir": "dist/",
   "config": "config/",
-  "plugins": {}
+  "plugins": {
+    "embark-babel": {
+      "minified": false,
+      "presets": ["latest", "react", "stage-0"]
+     }
+  }
 }
