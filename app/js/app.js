@@ -5,10 +5,12 @@ $(document).ready(function () {
   console.log("deployed at: " + Unitoken.address)
 });
 
-Unitoken.symbol().then(function (symbol) {
-  ReactDOM.render(
-    <h4>test 12: {symbol}</h4>,
-    document.getElementById("tests")
-  )
+Unitoken.symbol().then(symbol => {
+  Unitoken.balanceOf(web3.eth.defaultAccount).then(balance => {
+      ReactDOM.render(
+        <h4>Yor balance: {balance.toFixed(2)} {symbol}</h4>,
+        document.getElementById("tests")
+    )
+  })
 })
 
