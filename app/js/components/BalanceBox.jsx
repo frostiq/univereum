@@ -1,17 +1,20 @@
 class BalanceBox extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {balance: "?", symbol: "?"}
+        this.state = { balance: "?", symbol: "?" }
     }
 
     componentDidMount() {
-        var balance = Unitoken.balanceOf(web3.eth.defaultAccount)
-        var symbol = Unitoken.symbol()
-        balance.then((b) =>
-            symbol.then((s) =>
-                this.setState({balance: b.toFixed(2), symbol: s})
-            )
-        )
+        Promise.all([
+            Unitoken.balanceOf(web3.eth.defaultAccount),
+            Unitoken.decimals(),
+            Unitoken.symbol()
+        ]).then(a => {
+            this.setState({
+                balance: a[0].div(10 ** a[1]).toFormat(a[1]),
+                symbol: a[2]
+            })
+        })
     }
 
     render() {
