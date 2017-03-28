@@ -10,6 +10,8 @@
   "buildDir": "dist/",
   "config": "config/",
   "plugins": {
-    "embark-babel": {}
+    "embark-babel": {
+      "minified" : false
+    }
   }
 }

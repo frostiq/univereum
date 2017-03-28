@@ -2,7 +2,12 @@
 //import ReactDOM from 'react-dom';
 
 ReactDOM.render(
-  <BalanceBox/>,
+  <BalanceLine/>,
   document.getElementById("balance")
+)
+
+ReactDOM.render(
+  <TransferForm/>,
+  document.getElementById("transfer")
 )
 

@@ -1,4 +1,4 @@
-class BalanceBox extends React.Component {
+class BalanceLine extends React.Component {
     constructor(props) {
         super(props)
         this.state = { balance: "?", symbol: "?" }
