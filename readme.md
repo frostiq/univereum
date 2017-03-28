@@ -1,8 +1,8 @@
 # Welcome to Univereum project!
 
-For now UI is missing and only smart-contracts are working
+For now UI is limited
 
-You can test smart contracts with Mist auto-generated UI
+You can test all smart contracts with Mist auto-generated UI
 
 Any contribution to the project are greatly welcome!
 
