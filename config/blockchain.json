@@ -9,8 +9,8 @@
     "maxpeers": 0,
     "rpcHost": "localhost",
     "rpcPort": 8545,
-    "rpcApi": ["eth", "web3", "net", "personal"],
-    "rpcCorsDomain": "http://localhost:8000",
+    "rpcApi": ["eth", "web3", "net", "personal", "debug"],
+    "rpcCorsDomain": "*",
     "account": {
       "password": "config/development/password"
     }
