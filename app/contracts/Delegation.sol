@@ -89,14 +89,12 @@ contract Delegation is IDelegation, Owned {
             numberOfRounds++;
             uint lossRatio = 100 * _delegatedPercent ** numberOfRounds / 100 ** numberOfRounds;
             if (lossRatio > 0) {
-                uint weight = 0;
                 DelegatedVote v = _delegatedVotes[0];
                 for (i = 1; i < _delegatedVotes.length; i++){
                     v = _delegatedVotes[i];
                     if (v.nominee != v.voter && _voteWeight[v.voter] > 0) {
-                        weight = _voteWeight[v.voter] * lossRatio / 100;
-                        _voteWeight[v.voter] -= weight;
-                        _voteWeight[v.nominee] += weight;
+                        _voteWeight[v.voter] = 0;
+                        _voteWeight[v.nominee] += _voteWeight[v.voter] * lossRatio / 100;
                     }
                 }
             }
