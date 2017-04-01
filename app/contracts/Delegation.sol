@@ -4,13 +4,14 @@ import "./IToken.sol";
 import "./Owned.sol";
 
 contract IDelegation{
-    mapping (address => uint) public voteWeight;
+    function voteWeight(address) constant returns (uint);
     uint public numberOfRounds;
 }
 
 contract Delegation is IDelegation, Owned {
     IToken public _weightToken;
 
+    mapping (address => uint) public _voteWeight;
     mapping (address => uint) public _voterId;
     DelegatedVote[] public _delegatedVotes;
     uint public _delegatedPercent;
@@ -49,6 +50,15 @@ contract Delegation is IDelegation, Owned {
         ChangeOfRules(tokenAddress, _delegatedPercent);
     }
 
+    function voteWeight(address addr) constant returns (uint) {
+        if(_voteWeight[addr] > 0){
+            return _voteWeight[addr];
+        }
+        else{
+            return _weightToken.balanceOf(addr);
+        }
+    }
+
     function delegateVote(address nominatedAddress) returns (uint voteIndex) {
         if (_voterId[msg.sender] == 0) {
             _voterId[msg.sender] = _delegatedVotes.length;
@@ -69,10 +79,10 @@ contract Delegation is IDelegation, Owned {
 
             // Distribute the initial weight
             for (uint i=1; i< _delegatedVotes.length; i++) {
-                voteWeight[_delegatedVotes[i].nominee] = 0;
+                _voteWeight[_delegatedVotes[i].nominee] = 0;
             }
             for (i=1; i< _delegatedVotes.length; i++) {
-                voteWeight[_delegatedVotes[i].voter] = _weightToken.balanceOf(_delegatedVotes[i].voter);
+                _voteWeight[_delegatedVotes[i].voter] = _weightToken.balanceOf(_delegatedVotes[i].voter);
             }
         }
         else {
@@ -83,10 +93,10 @@ contract Delegation is IDelegation, Owned {
                 DelegatedVote v = _delegatedVotes[0];
                 for (i = 1; i < _delegatedVotes.length; i++){
                     v = _delegatedVotes[i];
-                    if (v.nominee != v.voter && voteWeight[v.voter] > 0) {
-                        weight = voteWeight[v.voter] * lossRatio / 100;
-                        voteWeight[v.voter] -= weight;
-                        voteWeight[v.nominee] += weight;
+                    if (v.nominee != v.voter && _voteWeight[v.voter] > 0) {
+                        weight = _voteWeight[v.voter] * lossRatio / 100;
+                        _voteWeight[v.voter] -= weight;
+                        _voteWeight[v.nominee] += weight;
                     }
                 }
             }
