@@ -11,11 +11,11 @@ contract IDelegation{
 contract Delegation is IDelegation, Owned {
     IToken public _weightToken;
 
-    mapping (address => uint) public _voteWeight;
+    mapping (address => uint) _voteWeight;
     mapping (address => uint) public _voterId;
     DelegatedVote[] public _delegatedVotes;
     uint public _delegatedPercent;
-    uint public _lastRoundTime;
+    uint public _lastCalculationTime;
 
     event ChangeOfRules(
         address tokenAddress,
@@ -73,9 +73,9 @@ contract Delegation is IDelegation, Owned {
 
     function calculateVotes() {
         
-        if (now > _lastRoundTime + 90 minutes) {
+        if (now > _lastCalculationTime + 90 minutes) {
             numberOfRounds = 0;
-            _lastRoundTime = now;
+            _lastCalculationTime = now;
 
             // Distribute the initial weight
             for (uint i=1; i< _delegatedVotes.length; i++) {
@@ -93,8 +93,8 @@ contract Delegation is IDelegation, Owned {
                 for (i = 1; i < _delegatedVotes.length; i++){
                     v = _delegatedVotes[i];
                     if (v.nominee != v.voter && _voteWeight[v.voter] > 0) {
-                        _voteWeight[v.voter] = 0;
                         _voteWeight[v.nominee] += _voteWeight[v.voter] * lossRatio / 100;
+                        _voteWeight[v.voter] = 0;
                     }
                 }
             }

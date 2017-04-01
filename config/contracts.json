@@ -12,7 +12,7 @@
         "deploy": false
       },
       "Unitoken": {
-        "args": [100000, "Unitoken_v0.0.3", 2, "UNI", "0x0"]
+        "args": [1000, "Unitoken_v0.0.3", 0, "UNI", "0x0"]
       },
       "Delegation": {
         "args": ["$Unitoken", 75]
