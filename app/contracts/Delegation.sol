@@ -1,6 +1,6 @@
 pragma solidity ^0.4.2;
 
-import "./IToken.sol";
+import "./Unitoken.sol";
 import "./Owned.sol";
 
 contract IDelegation{

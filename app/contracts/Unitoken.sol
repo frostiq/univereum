@@ -1,7 +1,10 @@
 pragma solidity ^0.4.2;
 
-import "./IToken.sol";
 import "./Owned.sol";
+
+contract IToken {
+    mapping (address => uint) public balanceOf;
+}
 
 contract Unitoken is IToken, Owned {
     /* Public variables of the token */
