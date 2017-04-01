@@ -51,7 +51,7 @@ contract Delegation is IDelegation, Owned {
     }
 
     function voteWeight(address addr) constant returns (uint) {
-        if(_voteWeight[addr] > 0){
+        if(_voteWeight[addr] > 0 || _voterId[msg.sender] > 0){ // if user is principal or delegate
             return _voteWeight[addr];
         }
         else{
