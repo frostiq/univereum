@@ -1,5 +1,7 @@
 # Welcome to Univereum project!
 
+[Short description](https://github.com/frostiq/univereum/wiki/Short-description)
+
 For now UI is limited
 
 You can test all smart contracts with Mist auto-generated UI
