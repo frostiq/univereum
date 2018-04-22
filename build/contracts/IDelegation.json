@@ -40,9 +40,9 @@
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "pragma solidity ^0.4.2;\n\nimport \"./Unitoken.sol\";\nimport \"./Owned.sol\";\n\ncontract IDelegation{\n    function voteWeight(address) constant returns (uint);\n    uint public numberOfRounds;\n}\n\ncontract Delegation is IDelegation, Owned {\n    IToken public _weightToken;\n\n    mapping (address => uint) _voteWeight;\n    mapping (address => uint) public _voterId;\n    DelegatedVote[] public _delegatedVotes;\n    uint public _delegatedPercent;\n    uint public _lastCalculationTime;\n\n    event ChangeOfRules(\n        address tokenAddress,\n        uint delegatedPercent\n    );\n\n    event DelegationRoundFinished(uint roundNumber);\n\n    struct DelegatedVote {\n        address nominee;\n        address voter;\n    }\n\n    function Delegation(\n        address tokenAddress,\n        uint percentLossInEachRound)\n    {\n        changeRules(tokenAddress, percentLossInEachRound);\n    }\n\n    function changeRules(\n        address tokenAddress,\n        uint percentLossInEachRound)\n        onlyOwner\n    {\n        _weightToken = IToken(tokenAddress);\n        _delegatedPercent = 100 - percentLossInEachRound;\n        if (_delegatedPercent > 100) _delegatedPercent = 100;\n        _delegatedVotes.length++;\n        _delegatedVotes[0] = DelegatedVote({nominee: 0, voter: 0});\n\n        ChangeOfRules(tokenAddress, _delegatedPercent);\n    }\n\n    function voteWeight(address addr) constant returns (uint) {\n        if(_voteWeight[addr] > 0 || _voterId[msg.sender] > 0){ // if user is principal or delegate\n            return _voteWeight[addr];\n        }\n        else{\n            return _weightToken.balanceOf(addr);\n        }\n    }\n\n    function delegateVote(address nominatedAddress) returns (uint voteIndex) {\n        if (_voterId[msg.sender] == 0) {\n            _voterId[msg.sender] = _delegatedVotes.length;\n            voteIndex = _delegatedVotes.length++;\n        }\n        else {\n            voteIndex = _voterId[msg.sender];\n        }\n\n        _delegatedVotes[voteIndex] = DelegatedVote({nominee: nominatedAddress, voter: msg.sender});\n    }\n\n    function calculateVotes() {\n        \n        if (now > _lastCalculationTime + 90 minutes) {\n            numberOfRounds = 0;\n            _lastCalculationTime = now;\n\n            // Distribute the initial weight\n            for (uint i=1; i< _delegatedVotes.length; i++) {\n                _voteWeight[_delegatedVotes[i].nominee] = 0;\n            }\n            for (i=1; i< _delegatedVotes.length; i++) {\n                _voteWeight[_delegatedVotes[i].voter] = _weightToken.balanceOf(_delegatedVotes[i].voter);\n            }\n        }\n        else {\n            numberOfRounds++;\n            uint lossRatio = 100 * _delegatedPercent ** numberOfRounds / 100 ** numberOfRounds;\n            if (lossRatio > 0) {\n                DelegatedVote v = _delegatedVotes[0];\n                for (i = 1; i < _delegatedVotes.length; i++){\n                    v = _delegatedVotes[i];\n                    if (v.nominee != v.voter && _voteWeight[v.voter] > 0) {\n                        _voteWeight[v.nominee] += _voteWeight[v.voter] * lossRatio / 100;\n                        _voteWeight[v.voter] = 0;\n                    }\n                }\n            }\n        }\n\n        DelegationRoundFinished(numberOfRounds);\n    }\n\n    /* This unnamed function is called whenever someone tries to send ether to it */\n    function () {\n        throw;     // Prevents accidental sending of ether\n    }\n}",
-  "sourcePath": "/Users/frostiq/source/univereum/x/contracts/Delegation.sol",
+  "sourcePath": "/Users/frostiq/source/univereum/contracts/Delegation.sol",
   "ast": {
-    "absolutePath": "/Users/frostiq/source/univereum/x/contracts/Delegation.sol",
+    "absolutePath": "/Users/frostiq/source/univereum/contracts/Delegation.sol",
     "exportedSymbols": {
       "Delegation": [
         351
@@ -66,23 +66,23 @@
         "src": "0:23:0"
       },
       {
-        "absolutePath": "/Users/frostiq/source/univereum/x/contracts/Unitoken.sol",
+        "absolutePath": "/Users/frostiq/source/univereum/contracts/Unitoken.sol",
         "file": "./Unitoken.sol",
         "id": 2,
         "nodeType": "ImportDirective",
         "scope": 352,
-        "sourceUnit": 1065,
+        "sourceUnit": 1122,
         "src": "25:24:0",
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
-        "absolutePath": "/Users/frostiq/source/univereum/x/contracts/Owned.sol",
+        "absolutePath": "/Users/frostiq/source/univereum/contracts/Owned.sol",
         "file": "./Owned.sol",
         "id": 3,
         "nodeType": "ImportDirective",
         "scope": 352,
-        "sourceUnit": 868,
+        "sourceUnit": 925,
         "src": "50:21:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -239,10 +239,10 @@
               "id": 16,
               "name": "Owned",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 867,
+              "referencedDeclaration": 924,
               "src": "224:5:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Owned_$867",
+                "typeIdentifier": "t_contract$_Owned_$924",
                 "typeString": "contract Owned"
               }
             },
@@ -253,7 +253,7 @@
         ],
         "contractDependencies": [
           13,
-          867
+          924
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -261,7 +261,7 @@
         "id": 351,
         "linearizedBaseContracts": [
           351,
-          867,
+          924,
           13
         ],
         "name": "Delegation",
@@ -277,7 +277,7 @@
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_contract$_IToken_$875",
+              "typeIdentifier": "t_contract$_IToken_$932",
               "typeString": "contract IToken"
             },
             "typeName": {
@@ -285,10 +285,10 @@
               "id": 18,
               "name": "IToken",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 875,
+              "referencedDeclaration": 932,
               "src": "236:6:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_IToken_$875",
+                "typeIdentifier": "t_contract$_IToken_$932",
                 "typeString": "contract IToken"
               }
             },
@@ -828,7 +828,7 @@
                       "referencedDeclaration": 19,
                       "src": "991:12:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_IToken_$875",
+                        "typeIdentifier": "t_contract$_IToken_$932",
                         "typeString": "contract IToken"
                       }
                     },
@@ -862,10 +862,10 @@
                         "name": "IToken",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 875,
+                        "referencedDeclaration": 932,
                         "src": "1006:6:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_IToken_$875_$",
+                          "typeIdentifier": "t_type$_t_contract$_IToken_$932_$",
                           "typeString": "type(contract IToken)"
                         }
                       },
@@ -879,13 +879,13 @@
                       "nodeType": "FunctionCall",
                       "src": "1006:20:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_IToken_$875",
+                        "typeIdentifier": "t_contract$_IToken_$932",
                         "typeString": "contract IToken"
                       }
                     },
                     "src": "991:35:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_IToken_$875",
+                      "typeIdentifier": "t_contract$_IToken_$932",
                       "typeString": "contract IToken"
                     }
                   },
@@ -1355,7 +1355,7 @@
                   "name": "onlyOwner",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 854,
+                  "referencedDeclaration": 911,
                   "src": "967:9:0",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
@@ -1572,7 +1572,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1076,
+                            "referencedDeclaration": 1133,
                             "src": "1423:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -1675,7 +1675,7 @@
                               "referencedDeclaration": 19,
                               "src": "1558:12:0",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_IToken_$875",
+                                "typeIdentifier": "t_contract$_IToken_$932",
                                 "typeString": "contract IToken"
                               }
                             },
@@ -1686,7 +1686,7 @@
                             "lValueRequested": false,
                             "memberName": "balanceOf",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 874,
+                            "referencedDeclaration": 931,
                             "src": "1558:22:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_view$_t_address_$returns$_t_uint256_$",
@@ -1895,7 +1895,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1076,
+                          "referencedDeclaration": 1133,
                           "src": "1705:3:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -2005,7 +2005,7 @@
                                 "name": "msg",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 1076,
+                                "referencedDeclaration": 1133,
                                 "src": "1892:3:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_magic_message",
@@ -2089,7 +2089,7 @@
                                 "name": "msg",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 1076,
+                                "referencedDeclaration": 1133,
                                 "src": "1746:3:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_magic_message",
@@ -2317,7 +2317,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1076,
+                            "referencedDeclaration": 1133,
                             "src": "2002:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -2485,7 +2485,7 @@
                       "name": "now",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1078,
+                      "referencedDeclaration": 1135,
                       "src": "2076:3:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -3740,7 +3740,7 @@
                             "name": "now",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1078,
+                            "referencedDeclaration": 1135,
                             "src": "2186:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_uint256",
@@ -4214,7 +4214,7 @@
                                       "referencedDeclaration": 19,
                                       "src": "2485:12:0",
                                       "typeDescriptions": {
-                                        "typeIdentifier": "t_contract$_IToken_$875",
+                                        "typeIdentifier": "t_contract$_IToken_$932",
                                         "typeString": "contract IToken"
                                       }
                                     },
@@ -4225,7 +4225,7 @@
                                     "lValueRequested": false,
                                     "memberName": "balanceOf",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 874,
+                                    "referencedDeclaration": 931,
                                     "src": "2485:22:0",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_function_external_view$_t_address_$returns$_t_uint256_$",
@@ -4540,7 +4540,7 @@
     "src": "0:3399:0"
   },
   "legacyAST": {
-    "absolutePath": "/Users/frostiq/source/univereum/x/contracts/Delegation.sol",
+    "absolutePath": "/Users/frostiq/source/univereum/contracts/Delegation.sol",
     "exportedSymbols": {
       "Delegation": [
         351
@@ -4564,23 +4564,23 @@
         "src": "0:23:0"
       },
       {
-        "absolutePath": "/Users/frostiq/source/univereum/x/contracts/Unitoken.sol",
+        "absolutePath": "/Users/frostiq/source/univereum/contracts/Unitoken.sol",
         "file": "./Unitoken.sol",
         "id": 2,
         "nodeType": "ImportDirective",
         "scope": 352,
-        "sourceUnit": 1065,
+        "sourceUnit": 1122,
         "src": "25:24:0",
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
-        "absolutePath": "/Users/frostiq/source/univereum/x/contracts/Owned.sol",
+        "absolutePath": "/Users/frostiq/source/univereum/contracts/Owned.sol",
         "file": "./Owned.sol",
         "id": 3,
         "nodeType": "ImportDirective",
         "scope": 352,
-        "sourceUnit": 868,
+        "sourceUnit": 925,
         "src": "50:21:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -4737,10 +4737,10 @@
               "id": 16,
               "name": "Owned",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 867,
+              "referencedDeclaration": 924,
               "src": "224:5:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Owned_$867",
+                "typeIdentifier": "t_contract$_Owned_$924",
                 "typeString": "contract Owned"
               }
             },
@@ -4751,7 +4751,7 @@
         ],
         "contractDependencies": [
           13,
-          867
+          924
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -4759,7 +4759,7 @@
         "id": 351,
         "linearizedBaseContracts": [
           351,
-          867,
+          924,
           13
         ],
         "name": "Delegation",
@@ -4775,7 +4775,7 @@
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_contract$_IToken_$875",
+              "typeIdentifier": "t_contract$_IToken_$932",
               "typeString": "contract IToken"
             },
             "typeName": {
@@ -4783,10 +4783,10 @@
               "id": 18,
               "name": "IToken",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 875,
+              "referencedDeclaration": 932,
               "src": "236:6:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_IToken_$875",
+                "typeIdentifier": "t_contract$_IToken_$932",
                 "typeString": "contract IToken"
               }
             },
@@ -5326,7 +5326,7 @@
                       "referencedDeclaration": 19,
                       "src": "991:12:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_IToken_$875",
+                        "typeIdentifier": "t_contract$_IToken_$932",
                         "typeString": "contract IToken"
                       }
                     },
@@ -5360,10 +5360,10 @@
                         "name": "IToken",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 875,
+                        "referencedDeclaration": 932,
                         "src": "1006:6:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_IToken_$875_$",
+                          "typeIdentifier": "t_type$_t_contract$_IToken_$932_$",
                           "typeString": "type(contract IToken)"
                         }
                       },
@@ -5377,13 +5377,13 @@
                       "nodeType": "FunctionCall",
                       "src": "1006:20:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_IToken_$875",
+                        "typeIdentifier": "t_contract$_IToken_$932",
                         "typeString": "contract IToken"
                       }
                     },
                     "src": "991:35:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_IToken_$875",
+                      "typeIdentifier": "t_contract$_IToken_$932",
                       "typeString": "contract IToken"
                     }
                   },
@@ -5853,7 +5853,7 @@
                   "name": "onlyOwner",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 854,
+                  "referencedDeclaration": 911,
                   "src": "967:9:0",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
@@ -6070,7 +6070,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1076,
+                            "referencedDeclaration": 1133,
                             "src": "1423:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -6173,7 +6173,7 @@
                               "referencedDeclaration": 19,
                               "src": "1558:12:0",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_IToken_$875",
+                                "typeIdentifier": "t_contract$_IToken_$932",
                                 "typeString": "contract IToken"
                               }
                             },
@@ -6184,7 +6184,7 @@
                             "lValueRequested": false,
                             "memberName": "balanceOf",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 874,
+                            "referencedDeclaration": 931,
                             "src": "1558:22:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_view$_t_address_$returns$_t_uint256_$",
@@ -6393,7 +6393,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1076,
+                          "referencedDeclaration": 1133,
                           "src": "1705:3:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -6503,7 +6503,7 @@
                                 "name": "msg",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 1076,
+                                "referencedDeclaration": 1133,
                                 "src": "1892:3:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_magic_message",
@@ -6587,7 +6587,7 @@
                                 "name": "msg",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 1076,
+                                "referencedDeclaration": 1133,
                                 "src": "1746:3:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_magic_message",
@@ -6815,7 +6815,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1076,
+                            "referencedDeclaration": 1133,
                             "src": "2002:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -6983,7 +6983,7 @@
                       "name": "now",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1078,
+                      "referencedDeclaration": 1135,
                       "src": "2076:3:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -8238,7 +8238,7 @@
                             "name": "now",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1078,
+                            "referencedDeclaration": 1135,
                             "src": "2186:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_uint256",
@@ -8712,7 +8712,7 @@
                                       "referencedDeclaration": 19,
                                       "src": "2485:12:0",
                                       "typeDescriptions": {
-                                        "typeIdentifier": "t_contract$_IToken_$875",
+                                        "typeIdentifier": "t_contract$_IToken_$932",
                                         "typeString": "contract IToken"
                                       }
                                     },
@@ -8723,7 +8723,7 @@
                                     "lValueRequested": false,
                                     "memberName": "balanceOf",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 874,
+                                    "referencedDeclaration": 931,
                                     "src": "2485:22:0",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_function_external_view$_t_address_$returns$_t_uint256_$",
@@ -9043,5 +9043,5 @@
   },
   "networks": {},
   "schemaVersion": "2.0.0",
-  "updatedAt": "2018-04-22T14:23:01.682Z"
+  "updatedAt": "2018-04-22T15:33:22.995Z"
 }

@@ -1,4 +1,3 @@
-var SimpleStorage = artifacts.require("SimpleStorage");
 var Unitoken = artifacts.require("Unitoken")
 var Delegation = artifacts.require("Delegation")
 var LiquidAssociation = artifacts.require("LiquidAssociation")
