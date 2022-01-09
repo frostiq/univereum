@@ -1,7 +1,8 @@
 # Welcome to Univereum project!
 
 [Short description](https://github.com/frostiq/univereum/wiki/Short-description)
-[Whitepaper)(https://github.com/frostiq/univereum/wiki/Univereum-whitepaper-%5Brussian%5D)
+
+[Whitepaper](https://github.com/frostiq/univereum/wiki/Univereum-whitepaper-%5Brussian%5D)
 
 For now UI is limited
 
